@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.lucene.util.OpenBitSet;
+
 
 public class SmaliParser {
 
@@ -132,8 +135,23 @@ public class SmaliParser {
 				tokens = currentRecord.split(delimiter);
 				token = tokens[tokens.length - 1];
 
-				if (featuresHashMap.containsKey(token)) 
+				//if (featuresHashMap.containsKey(token)) 
+				//	bitSet.fastSet(featuresHashMap.get(token));
+				if (featuresHashMap.containsKey(token)) {
 					bitSet.fastSet(featuresHashMap.get(token));
+					if (!recognizedHashMap.containsKey(token)) {
+						//bw.write("R: " + token + "\n");
+						indivdualMethodCount++;
+						recognizedHashMap.put(token, (long)featuresHashMap.get(token));
+					}
+
+				} else {
+					if (!unRecognizedHashMap.containsKey(token)) {
+						//bw.write("U: " + token + "\n");
+						indivdualMethodCount++;
+						unRecognizedHashMap.put(token, indivdualMethodCount);
+					}
+				}
 			}
 		}
 		br.close();
@@ -251,8 +269,10 @@ public class SmaliParser {
 	
 	private void loadLogicHashMap() {
 		try {
-
-			BufferedReader in = new BufferedReader(new FileReader(logicMapPath));
+			InputStream is = getClass().getResourceAsStream(logicMapPath);
+		    InputStreamReader isr = new InputStreamReader(is);
+		    BufferedReader in = new BufferedReader(isr);
+//			BufferedReader in = new BufferedReader(new FileReader(logicMapPath));
 			String str;
 			
 			while ((str = in.readLine()) != null) {
@@ -270,8 +290,10 @@ public class SmaliParser {
 	
 	private void loadContentHashMap() {
 		try {
-
-			BufferedReader in = new BufferedReader(new FileReader(contentMapPath));
+			InputStream is = getClass().getResourceAsStream(contentMapPath);
+		    InputStreamReader isr = new InputStreamReader(is);
+		    BufferedReader in = new BufferedReader(isr);
+			//BufferedReader in = new BufferedReader(new FileReader(contentMapPath));
 			String str;
 			
 			while ((str = in.readLine()) != null) {
@@ -294,8 +316,10 @@ public class SmaliParser {
 
 	private void loadWhitelistLibs() {
 		try {
-
-			BufferedReader in = new BufferedReader(new FileReader(whiteListLibraries));
+			InputStream is = getClass().getResourceAsStream(whiteListLibraries);
+		    InputStreamReader isr = new InputStreamReader(is);
+		    BufferedReader in = new BufferedReader(isr);
+//			BufferedReader in = new BufferedReader(new FileReader(whiteListLibraries));
 			String str;
 			
 			while ((str = in.readLine()) != null) {
@@ -317,7 +341,10 @@ public class SmaliParser {
 	
 	public void loadPermissionsHashMap(String filePath) {
 		try {
-			BufferedReader in = new BufferedReader(new FileReader(filePath));
+			InputStream is = getClass().getResourceAsStream(filePath);
+		    InputStreamReader isr = new InputStreamReader(is);
+		    BufferedReader in = new BufferedReader(isr);
+//			BufferedReader in = new BufferedReader(new FileReader(filePath));
 			String str;
 
 			while ((str = in.readLine()) != null) {
@@ -496,7 +523,7 @@ public class SmaliParser {
 	public void searchAdLibs(File folder, OpenBitSet bitSet, int folderNameLength)  {
 		for (File fileEntry : folder.listFiles()) {
 			if (isWhitelisted(fileEntry.getAbsolutePath().substring(folderNameLength))) {
-				bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
+				//bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
 			//	System.out.println("WHITELISTED: " + fileEntry.getPath());
 				continue;
 			}
@@ -510,7 +537,7 @@ public class SmaliParser {
 	public void listFilesForFolder(File folder, OpenBitSet bitSet, int folderNameLength) {
 		for (File fileEntry : folder.listFiles()) {
 			if (isWhitelisted(fileEntry.getAbsolutePath().substring(folderNameLength))) {
-				bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
+				//bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
 			//	System.out.println("WHITELISTED: " + fileEntry.getPath());
 				continue;
 			}
@@ -531,7 +558,7 @@ public class SmaliParser {
 	public void listFilesForFolder(File folder, OpenBitSet bitSet, int folderNameLength, boolean whiteListEnable) {
 		for (File fileEntry : folder.listFiles()) {
 			if (whiteListEnable && isWhitelisted(fileEntry.getAbsolutePath().substring(folderNameLength))) {
-				bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
+				//bitSet.fastSet(whiteListHashMap.get(fileEntry.getAbsolutePath().substring(folderNameLength)));
 				//System.out.println("WHITELISTED: " + fileEntry.getAbsolutePath().substring(folderNameLength));
 				continue;
 			}

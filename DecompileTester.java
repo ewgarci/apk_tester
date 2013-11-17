@@ -1,4 +1,12 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -161,7 +169,12 @@ public class DecompileTester {
 			AppVector appVector = new AppVector(logicVector1, contentVector1);
 			sp.apkDirectoryTraversal(currentDir, logicVector1, contentVector1, wlEnable);
 			
-			currentDir = ad.disassembleIndividualFile(vsFolder);
+			 if(inputFolder.exists() && inputFolder.isDirectory()){
+				 currentDir = vsFolder;
+			 }else if(inputFolder.exists() && inputFolder.isFile()){
+				 currentDir = ad.disassembleIndividualFile(vsFolder);
+			 }
+			
 			AppVector appVector2 = new AppVector(logicVector2, contentVector2);
 			sp.apkDirectoryTraversal(currentDir, logicVector2, contentVector2, wlEnable);
 			//System.out.println(sp.recognizedHashMap);
@@ -171,20 +184,21 @@ public class DecompileTester {
 		}
 		
 		if(!maEnable && !mcEnable && !vsEnable){
-			if (wlEnable){
-				System.out.print("WhiteListed ");
-			}
-			
-			System.out.println("Results");
-			System.out.println("=========================");
+//			if (wlEnable){
+//				System.out.print("WhiteListed ");
+//			}
+//			
+//			System.out.println("Results");
+//			System.out.println("=========================");
 
 			OpenBitSet logicVector = new OpenBitSet(sp.logicFeaturesCount);
 			OpenBitSet contentVector = new OpenBitSet(sp.contentFeaturesCount);
 			AppVector appVector = new AppVector(logicVector, contentVector);
-			sp.apkDirectoryTraversal(currentDir, logicVector, contentVector, wlEnable);
-			//System.out.println(sp.recognizedHashMap);
 			
-			System.out.println("\nNumber of Logic Bits set: " + logicVector.cardinality());
+			sp.apkDirectoryTraversal(currentDir, logicVector, contentVector, wlEnable);
+			printMap(sp.recognizedHashMap);
+			
+//			System.out.println("\nNumber of Logic Bits set: " + logicVector.cardinality());
 		}
 		
 		//bsb.add(currentDir.getName(), bitSet);
@@ -195,4 +209,20 @@ public class DecompileTester {
 		//System.out.println("\nTotal time: " + (endTime - startTime) + " ms");
 		
 	}
+	
+	public static void printMap(HashMap<String, Long> map) {
+			for (Iterator<Map.Entry<String, Long>> iter1 = map.entrySet().iterator(); iter1.hasNext();) {
+				Map.Entry<String, Long> entry1 = iter1.next();
+				System.out.println(entry1.getKey());
+
+			}
+	}
+	
+	public static void printMap2(HashMap<String, Integer> map) {
+		for (Iterator<Map.Entry<String, Integer>> iter1 = map.entrySet().iterator(); iter1.hasNext();) {
+			Map.Entry<String, Integer> entry1 = iter1.next();
+			System.out.println(entry1.getKey());
+
+		}
+}
 }
